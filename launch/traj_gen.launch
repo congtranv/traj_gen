@@ -1,0 +1,30 @@
+<launch>
+	<arg name="max_vel" default="2.0" />
+    <arg name="max_acc" default="2.0" />
+	<arg name="x_pos_target" default="5.0" />
+	<arg name="y_pos_target" default="5.0" />
+	<arg name="z_pos_target" default="3.0" />
+	<arg name="x_vel_target" default="0.0" />
+	<arg name="y_vel_target" default="0.0" />
+	<arg name="z_vel_target" default="0.0" />
+
+	<arg name="gui" default="false"/>
+    <arg name="fcu_url" default="udp://:14540@localhost:14557"/>
+
+	<node pkg="traj_gen" name="traj_gen_node" type="traj_gen_node" output="screen">
+		<param name="max_v" value="$(arg max_vel)"/>
+		<param name="max_a" value="$(arg max_acc)"/>
+		<param name="target_pos_x" value="$(arg x_pos_target)"/>
+		<param name="target_pos_y" value="$(arg y_pos_target)"/>
+		<param name="target_pos_z" value="$(arg z_pos_target)"/>
+		<param name="target_vel_x" value="$(arg x_vel_target)"/>
+		<param name="target_vel_y" value="$(arg y_vel_target)"/>
+		<param name="target_vel_z" value="$(arg z_vel_target)"/>
+	</node>
+
+	<include file="$(find px4)/launch/mavros_posix_sitl.launch">
+		<arg name="gui" value="$(arg gui)"/>
+        <arg name="fcu_url" value="$(arg fcu_url)"/>
+	</include>
+	<include file="$(find traj_gen)/launch/rviz.launch"/>
+</launch>
