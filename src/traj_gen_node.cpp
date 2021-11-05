@@ -1,5 +1,5 @@
 #include<mav_trajectory_generation/polynomial_optimization_linear.h>
-#include <mav_trajectory_generation/polynomial_optimization_nonlinear.h>
+#include<mav_trajectory_generation/polynomial_optimization_nonlinear.h>
 #include<mav_trajectory_generation/trajectory.h>
 #include<mav_trajectory_generation_ros/trajectory_sampler_node.h>
 #include<mav_trajectory_generation_ros/ros_visualization.h>
@@ -87,9 +87,11 @@ int main(int argc, char** argv)
 	start.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY, current_velocity);
 	vertices.push_back(start);
 
-	middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION, Eigen::Vector3d(1,1,5));
+	middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION, Eigen::Vector3d(6,7,5));
 	vertices.push_back(middle);
-	middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION, Eigen::Vector3d(2,2,2));
+	middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION, Eigen::Vector3d(6,-7,5));
+	vertices.push_back(middle);
+	middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION, Eigen::Vector3d(-6,-7,5));
 	vertices.push_back(middle);
 
 	end.makeStartOrEnd(pos_target, derivative_to_optimize);
@@ -122,8 +124,8 @@ int main(int argc, char** argv)
 	// marker_pub.publish(markers);
 
 		
-	// mav_trajectory_generation::trajectoryToPolynomialTrajectoryMsg(trajectory, &poly_msg);
-	// poly_msg.header.frame_id = "map";
+	mav_trajectory_generation::trajectoryToPolynomialTrajectoryMsg(trajectory, &poly_msg);
+	poly_msg.header.frame_id = "map";
 	// ROS_INFO_STREAM("Publish Polynomial Trajectory\n" << poly_msg << "\n");
 	// traj_pub.publish(poly_msg);
 	// ROS_INFO_STREAM("Finish Publish Polynomial Trajectory\n");
@@ -131,6 +133,7 @@ int main(int argc, char** argv)
 	// ros::spin();
 	while(ros::ok())
 	{
+		traj_pub.publish(poly_msg);
 		marker_pub.publish(markers);
 		ros::spinOnce();
 	}
