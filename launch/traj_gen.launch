@@ -7,6 +7,7 @@
 	<arg name="x_vel_target" default="0.0" />
 	<arg name="y_vel_target" default="0.0" />
 	<arg name="z_vel_target" default="0.0" />
+	<arg name="dt" default="0.01" />
 
 	<arg name="gui" default="false"/>
     <arg name="fcu_url" default="udp://:14540@localhost:14557"/>
@@ -21,6 +22,10 @@
 		<param name="target_vel_y" value="$(arg y_vel_target)"/>
 		<param name="target_vel_z" value="$(arg z_vel_target)"/>
 	</node>
+
+	<node pkg="traj_gen" name="traj_samp_node" type="traj_samp_node" output="screen">
+		<param name="dt" value="$(arg dt)"/>
+	</node>/>
 
 	<include file="$(find px4)/launch/mavros_posix_sitl.launch">
 		<arg name="gui" value="$(arg gui)"/>

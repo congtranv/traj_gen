@@ -26,8 +26,6 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& odom)
 	current_odom = *odom;
 	tf::poseMsgToEigen(current_odom.pose.pose, current_pose);
 	tf::vectorMsgToEigen(current_odom.twist.twist.linear, current_velocity);
-	// ROS_INFO_STREAM("Current position:\n" << current_pose.translation() << "\n");
-	// ROS_INFO_STREAM("Current velocity:\n" << current_velocity << "\n");
 }
 
 int main(int argc, char** argv)
@@ -114,23 +112,12 @@ int main(int argc, char** argv)
 	non_opt.getPolynomialOptimizationRef().getSegments(&segments);
 	non_opt.getTrajectory(&trajectory);
 
-	// double sampling_time = 2.0;
-	// int derivative_order = mav_trajectory_generation::derivative_order::POSITION;
-	// Eigen::VectorXd sample = trajectory.evaluate(sampling_time, derivative_order);	
-	// ROS_INFO_STREAM("Sample:\n" << sample << "\n");
-
 	mav_trajectory_generation::drawMavTrajectory(trajectory, distance, frame_id, &markers);
-	ROS_INFO_STREAM("Marker\n" << markers << "\n");
-	// marker_pub.publish(markers);
-
+	// ROS_INFO_STREAM("Marker\n" << markers << "\n");
 		
 	mav_trajectory_generation::trajectoryToPolynomialTrajectoryMsg(trajectory, &poly_msg);
 	poly_msg.header.frame_id = "map";
-	// ROS_INFO_STREAM("Publish Polynomial Trajectory\n" << poly_msg << "\n");
-	// traj_pub.publish(poly_msg);
-	// ROS_INFO_STREAM("Finish Publish Polynomial Trajectory\n");
 
-	// ros::spin();
 	while(ros::ok())
 	{
 		traj_pub.publish(poly_msg);

@@ -40,8 +40,12 @@ include_directories(
 
 roslaunch_add_file_check(launch)
 
-add_executable(${PROJECT_NAME}_node src/traj_gen_node.cpp)
+add_executable(traj_gen_node src/traj_gen_node.cpp)
+add_executable(traj_samp_node src/traj_samp_node.cpp)
 
-target_link_libraries(${PROJECT_NAME}_node
+target_link_libraries(traj_gen_node
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(traj_samp_node
   ${catkin_LIBRARIES}
 )
