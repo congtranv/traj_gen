@@ -1,35 +1,23 @@
 <launch>
-	<arg name="max_vel" default="2.0" />
-    <arg name="max_acc" default="2.0" />
-	<arg name="x_pos_target" default="5.0" />
-	<arg name="y_pos_target" default="5.0" />
-	<arg name="z_pos_target" default="3.0" />
-	<arg name="x_vel_target" default="0.0" />
-	<arg name="y_vel_target" default="0.0" />
-	<arg name="z_vel_target" default="0.0" />
-	<arg name="dt" default="0.01" />
-
-	<arg name="gui" default="false"/>
-    <arg name="fcu_url" default="udp://:14540@localhost:14557"/>
+	
+	<arg name="dimension" default="3"/>
+	<arg name="nonlinear_opt" default="true"/>
+	<arg name="max_v" default="2.0"/>
+    <arg name="max_a" default="2.0"/>
+	<arg name="max_ang_v" default="1.0"/>
+    <arg name="max_ang_a" default="1.0"/>
+	<arg name="init_z" value="1.5" />
 
 	<node pkg="traj_gen" name="traj_gen_node" type="traj_gen_node" output="screen">
-		<param name="max_v" value="$(arg max_vel)"/>
-		<param name="max_a" value="$(arg max_acc)"/>
-		<param name="target_pos_x" value="$(arg x_pos_target)"/>
-		<param name="target_pos_y" value="$(arg y_pos_target)"/>
-		<param name="target_pos_z" value="$(arg z_pos_target)"/>
-		<param name="target_vel_x" value="$(arg x_vel_target)"/>
-		<param name="target_vel_y" value="$(arg y_vel_target)"/>
-		<param name="target_vel_z" value="$(arg z_vel_target)"/>
+		<!-- <remap from="path_segments_4D" to="trajectory"/> -->
+		<remap from="reference/pose" to="/mavros/local_position/pose"/>
+		<param name="dimension" value="$(arg dimension)"/>
+		<param name="nonlinear_opt" value="$(arg nonlinear_opt)"/>
+		<param name="max_v" value="$(arg max_v)"/>
+		<param name="max_a" value="$(arg max_a)"/>
+		<param name="max_ang_v" value="$(arg max_ang_v)"/>
+		<param name="max_ang_a" value="$(arg max_ang_a)"/>
+		<param name="init_z" value="$(arg init_z)"/>
 	</node>
 
-	<node pkg="traj_gen" name="traj_samp_node" type="traj_samp_node" output="screen">
-		<param name="dt" value="$(arg dt)"/>
-	</node>/>
-
-	<include file="$(find px4)/launch/mavros_posix_sitl.launch">
-		<arg name="gui" value="$(arg gui)"/>
-        <arg name="fcu_url" value="$(arg fcu_url)"/>
-	</include>
-	<include file="$(find traj_gen)/launch/rviz.launch"/>
 </launch>

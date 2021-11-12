@@ -34,6 +34,7 @@
         "/home/congtranv/ros/catkin_ws/src/subpub/include/**",
         "/home/congtranv/ros/catkin_ws/src/mavros_controllers/trajectory_publisher/include/**",
         "/home/congtranv/ros/catkin_ws/src/uav_motion/include/**",
+        "/home/congtranv/ros/catkin_ws/src/traj_gen/include/**",
         "/usr/include/**"
       ],
       "name": "ROS"

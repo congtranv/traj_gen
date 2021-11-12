@@ -12,6 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   mav_trajectory_generation
   mav_trajectory_generation_ros
   roslaunch
+  dynamic_reconfigure
+  geometric_controller
+  controller_msgs
   message_generation
 )
 
@@ -27,25 +30,38 @@ generate_messages(
 )
 
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES traj_gen
-  CATKIN_DEPENDS geometry_msgs mavros_msgs nav_msgs roscpp rospy sensor_msgs std_msgs mav_trajectory_generation mav_trajectory_generation_ros message_runtime
+  CATKIN_DEPENDS geometry_msgs mavros_msgs nav_msgs roscpp rospy sensor_msgs std_msgs mav_trajectory_generation mav_trajectory_generation_ros dynamic_reconfigure geometric_controller controller_msgs message_runtime
 #  DEPENDS system_lib
 )
 
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
 roslaunch_add_file_check(launch)
 
 add_executable(traj_gen_node src/traj_gen_node.cpp)
-add_executable(traj_samp_node src/traj_samp_node.cpp)
+# add_executable(traj_samp_node src/traj_samp_node.cpp)
+add_executable(geometric_controller src/geometric_controller.cpp)
+add_executable(command_point_node src/command_point_node.cpp)
+add_executable(reference_pose_node src/reference_pose_node.cpp)
 
 target_link_libraries(traj_gen_node
   ${catkin_LIBRARIES}
 )
-target_link_libraries(traj_samp_node
+# target_link_libraries(traj_samp_node
+#   ${catkin_LIBRARIES}
+# )
+target_link_libraries(geometric_controller
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(command_point_node
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(reference_pose_node
   ${catkin_LIBRARIES}
 )

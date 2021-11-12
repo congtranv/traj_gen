@@ -1,0 +1,4 @@
+<launch>
+	<node pkg="traj_gen" name="command_point_node" type="command_point_node" output="screen"/>
+	<!-- <node pkg="traj_gen" name="reference_pose_node" type="reference_pose_node" output="screen"/> -->
+</launch>

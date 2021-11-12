@@ -1,0 +1,10 @@
+<launch>
+
+	<arg name="dt" default="0.01"/> 
+
+	<node pkg="traj_gen" name="traj_samp_node" type="traj_samp_node" output="screen">
+		<!-- <remap from="path_segments_4D" to="trajectory"/> -->
+		<param name="dt" value="$(arg dt)"/>
+	</node>/>
+
+</launch>
