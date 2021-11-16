@@ -18,6 +18,8 @@
 #include<tf/tf.h>
 #include<tf/transform_datatypes.h>
 #include<eigen_conversions/eigen_msg.h>
+#include<traj_gen/FlatTarget.h>
+#include<std_msgs/Float32.h>
 
 double max_v_;
 double max_a_;
@@ -26,6 +28,11 @@ double max_ang_a_;
 double yaw_;
 double init_z_;
 
+ros::Timer publish_timer_;
+ros::Publisher flat_ref_pub_;
+ros::Publisher yaw_ref_pub_;
+ros::Time start_time_;
+double current_sapmle_time_;
 mavros_msgs::State current_state_;
 
 Eigen::Vector3d target_pos_;
@@ -40,15 +47,18 @@ Eigen::Affine3d current_pose_ = Eigen::Affine3d::Identity();
 Eigen::Vector3d current_velocity_ = Eigen::Vector3d::Zero();
 Eigen::Vector3d current_ang_vel_ = Eigen::Vector3d::Zero();
 
+double dt_ = 0.01;
 int dimension_;
 const int N_ = 10;
 bool nonlinear_ = true;
 const int derivative_to_optimize_ = mav_trajectory_generation::derivative_order::SNAP;
 mav_trajectory_generation::NonlinearOptimizationParameters parameters_;
+mav_trajectory_generation::Trajectory trajectory_;
 
 void cmdPointCallback(const geometry_msgs::Point::ConstPtr& msg);
 void localVelCallback(const geometry_msgs::TwistStamped::ConstPtr& msg);
 void refPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
 void stateCallback(const mavros_msgs::State::ConstPtr& msg);
+void cmdTimerCallback(const ros::TimerEvent&);
 
 #endif
