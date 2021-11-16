@@ -23,6 +23,8 @@ int main(int argc, char** argv)
 
 	const bool oneshot = false;
 	const bool autostart = false;
+	std::vector<double> target_pos;
+	std::vector<double> target_vel;
 
 	// ros::Publisher traj_pub  = nh.advertise<mav_planning_msgs::PolynomialTrajectory>("path_segments", 1);
 	// ros::Publisher traj4d_pub = nh.advertise<mav_planning_msgs::PolynomialTrajectory4D>("path_segments_4D", 1);
@@ -35,7 +37,7 @@ int main(int argc, char** argv)
 
 	ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("/mavros/state", 1, stateCallback);
 	ros::Subscriber ref_pose_sub = nh.subscribe<geometry_msgs::PoseStamped>("reference/pose", 1, refPoseCallback);
-	ros::Subscriber cmd_point_sub = nh.subscribe<geometry_msgs::Point>("/command/point", 1, cmdPointCallback);
+	// ros::Subscriber cmd_point_sub = nh.subscribe<geometry_msgs::Point>("/command/point", 1, cmdPointCallback);
 	ros::Subscriber local_vel_sub = nh.subscribe<geometry_msgs::TwistStamped>("/mavros/local_position/velocity_body", 1, localVelCallback);
 	
 	publish_timer_ = nh.createTimer(ros::Duration(dt_), &cmdTimerCallback, oneshot, autostart);
@@ -48,11 +50,15 @@ int main(int argc, char** argv)
 	nh.param<double>("/traj_gen_node/max_ang_v", max_ang_v_, 1.0);
 	nh.param<double>("/traj_gen_node/max_ang_a", max_ang_a_, 1.0);
 	nh.param<double>("/traj_gen_node/init_z", init_z_, 1.5);
-	
-	target_vel_ << 0.0, 0.0, 0.0;
+	nh.getParam("/traj_gen_node/target_pos", target_pos);
+	nh.getParam("/traj_gen_node/target_vel", target_vel);
+
+	target_vel_ << target_vel[0], target_vel[1], target_vel[2];
 	init_pos_ << 0.0, 0.0, init_z_;
 	// ref_pose_.pose.position.x = ref_pose_.pose.position.y = ref_pose_.pose.position.z = 0.0;
-	// cmd_point_.x = cmd_point_.y = cmd_point_.z = 5.0;
+	cmd_point_.x = target_pos[0];
+	cmd_point_.y = target_pos[1];
+	cmd_point_.z = target_pos[2];
 	// yaw_ = 0.0;
 
 	while(ros::ok() && !current_state_.connected)

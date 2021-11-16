@@ -18,6 +18,8 @@
 		<param name="max_ang_v" value="$(arg max_ang_v)"/>
 		<param name="max_ang_a" value="$(arg max_ang_a)"/>
 		<param name="init_z" value="$(arg init_z)"/>
+		<rosparam param="target_pos">[5.0, 5.0, 5.0]</rosparam>
+		<rosparam param="target_vel">[0.0, 0.0, 0.0]</rosparam>
 	</node>
 
 </launch>

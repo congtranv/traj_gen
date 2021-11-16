@@ -20,6 +20,7 @@
 #include<eigen_conversions/eigen_msg.h>
 #include<traj_gen/FlatTarget.h>
 #include<std_msgs/Float32.h>
+#include<vector>
 
 double max_v_;
 double max_a_;
