@@ -11,10 +11,7 @@
 #include<visualization_msgs/Marker.h> 
 #include<visualization_msgs/MarkerArray.h>
 #include<geometry_msgs/PoseStamped.h>
-#include<geometry_msgs/TwistStamped.h>
-#include<geometry_msgs/Point.h>
 #include<nav_msgs/Odometry.h>
-#include<mavros_msgs/State.h>
 #include<tf/tf.h>
 #include<tf/transform_datatypes.h>
 #include<eigen_conversions/eigen_msg.h>
@@ -33,18 +30,18 @@ ros::Timer publish_timer_;
 ros::Publisher flat_ref_pub_;
 ros::Publisher yaw_ref_pub_;
 ros::Time start_time_;
-double current_sapmle_time_;
-mavros_msgs::State current_state_;
+double current_sample_time_;
 
+Eigen::Vector3d start_pos_;
 Eigen::Vector3d target_pos_;
+Eigen::Vector3d middle_pos_;
 Eigen::Vector3d init_pos_;
 Eigen::Vector3d target_vel_;
 
-geometry_msgs::Point cmd_point_;
-geometry_msgs::PoseStamped ref_pose_;
-geometry_msgs::TwistStamped local_vel_;
+bool odom_received_ = false;
 
 Eigen::Affine3d current_pose_ = Eigen::Affine3d::Identity();
+Eigen::Affine3d ref_pose_se3_ = Eigen::Affine3d::Identity();
 Eigen::Vector3d current_velocity_ = Eigen::Vector3d::Zero();
 Eigen::Vector3d current_ang_vel_ = Eigen::Vector3d::Zero();
 
@@ -56,10 +53,8 @@ const int derivative_to_optimize_ = mav_trajectory_generation::derivative_order:
 mav_trajectory_generation::NonlinearOptimizationParameters parameters_;
 mav_trajectory_generation::Trajectory trajectory_;
 
-void cmdPointCallback(const geometry_msgs::Point::ConstPtr& msg);
-void localVelCallback(const geometry_msgs::TwistStamped::ConstPtr& msg);
-void refPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
-void stateCallback(const mavros_msgs::State::ConstPtr& msg);
+void odomCallback(const nav_msgs::Odometry::ConstPtr& msg);
 void cmdTimerCallback(const ros::TimerEvent&);
+void refPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
 
 #endif

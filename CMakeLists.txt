@@ -44,24 +44,16 @@ include_directories(
 roslaunch_add_file_check(launch)
 
 add_executable(traj_gen_node src/traj_gen_node.cpp)
-# add_executable(traj_samp_node src/traj_samp_node.cpp)
 add_executable(geometric_controller src/geometric_controller.cpp)
 add_executable(command_point_node src/command_point_node.cpp)
-add_executable(reference_pose_node src/reference_pose_node.cpp)
 
 target_link_libraries(traj_gen_node
   ${catkin_LIBRARIES}
 )
-# target_link_libraries(traj_samp_node
-#   ${catkin_LIBRARIES}
-# )
 target_link_libraries(geometric_controller
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(command_point_node
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(reference_pose_node
   ${catkin_LIBRARIES}
 )
