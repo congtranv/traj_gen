@@ -26,16 +26,16 @@ int main(int argc, char** argv)
 	// ros::Duration(0.5).sleep();
 	nh.param<int>("/traj_gen_node/dimension", dimension_, 3);
 	nh.param<bool>("/traj_gen_node/nonlinear_opt", nonlinear_, nonlinear_);
+	nh.param<bool>("/traj_gen_node/input_middle", input_middle_, input_middle_);
 	nh.param<double>("/traj_gen_node/max_v", max_v_, 2.0);
 	nh.param<double>("/traj_gen_node/max_a", max_a_, 2.0);
 	nh.param<double>("/traj_gen_node/max_ang_v", max_ang_v_, 1.0);
 	nh.param<double>("/traj_gen_node/max_ang_a", max_ang_a_, 1.0);
 	nh.getParam("/traj_gen_node/target_pos", target_pos);
-	// nh.getParam("/traj_gen_node/middle_pos", middle_pos);
+	nh.getParam("/traj_gen_node/middle_pos", middle_pos);
 	nh.getParam("/traj_gen_node/target_vel", target_vel);
 
 	target_vel_ << target_vel[0], target_vel[1], target_vel[2];
-	// middle_pos_ << middle_pos[0], middle_pos[1], middle_pos[2];
 	target_pos_ << target_pos[0], target_pos[1], target_pos[2];
 
 	while(ros::ok() && !odom_received_)
@@ -43,7 +43,8 @@ int main(int argc, char** argv)
         ros::spinOnce();
     }
 
-	ROS_INFO("generator: Initialized");
+	std::printf("\n[ generator] Initialized\n");
+	std::printf("[ generator] max_v = %.1f m/s, max_a = %.1f m/s^2\n", max_v_, max_a_);
 
 	mav_trajectory_generation::Vertex::Vector vertices;
 	mav_trajectory_generation::Vertex start(dimension_), middle(dimension_), end(dimension_); 
@@ -69,8 +70,15 @@ int main(int argc, char** argv)
 		mid_pt.x = (start_pos_[0] + target_pos_[0])/2;
 		mid_pt.y = (start_pos_[1] + target_pos_[1])/2;
 		mid_pt.z = (start_pos_[2] + target_pos_[2])/2;
-		middle_pos_ << mid_pt.x, mid_pt.y, mid_pt.z;
-
+		if(input_middle_)
+		{
+			middle_pos_ << middle_pos[0], middle_pos[1], middle_pos[2];
+		}
+		else
+		{
+			middle_pos_ << mid_pt.x, mid_pt.y, mid_pt.z;
+		}
+		
 		middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION, middle_pos_);
 		vertices.push_back(middle);
 
@@ -89,7 +97,14 @@ int main(int argc, char** argv)
 		mid_pt.x = (start_pos_[0] + target_pos_[0])/2;
 		mid_pt.y = (start_pos_[1] + target_pos_[1])/2;
 		mid_pt.z = (start_pos_[2] + target_pos_[2])/2;
-		middle_pos_ << mid_pt.x, mid_pt.y, mid_pt.z;
+		if(input_middle_)
+		{
+			middle_pos_ << middle_pos[0], middle_pos[1], middle_pos[2];
+		}
+		else
+		{
+			middle_pos_ << mid_pt.x, mid_pt.y, mid_pt.z;
+		}
 
 		middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION, Eigen::Vector4d(middle_pos_[0], middle_pos_[1], middle_pos_[2], yaw_));
 		vertices.push_back(middle);
@@ -101,12 +116,12 @@ int main(int argc, char** argv)
 
 	if(vertices.size() == 1)
 	{
-		ROS_ERROR("generator: Can't generate trajectory with only one point!");
+		ROS_ERROR("Can't generate trajectory with only one point!\n");
 		ros::shutdown();
 	}
 	else
 	{
-		ROS_INFO_STREAM_ONCE("vertices:\n" << vertices);
+		ROS_INFO_STREAM_ONCE("\n" << vertices);
 	}
 
 	segment_times = estimateSegmentTimes(vertices, max_v_, max_a_);
@@ -114,7 +129,7 @@ int main(int argc, char** argv)
 	if(!nonlinear_)
 	{
 		//linear
-		ROS_INFO_ONCE("generator: linear optimization");
+		std::printf("[ generator] Used linear optimization\n");
 		opt.setupFromVertices(vertices, segment_times, derivative_to_optimize_);
 		opt.solveLinear();
 		opt.getSegments(&segments);	
@@ -123,7 +138,7 @@ int main(int argc, char** argv)
 	else
 	{
 		//nonlinear
-		ROS_INFO_ONCE("generator: nonlinear optimization");
+		std::printf("[ generator] Used nonlinear optimization\n");
 		non_opt.setupFromVertices(vertices, segment_times, derivative_to_optimize_);
 		non_opt.addMaximumMagnitudeConstraint(mav_trajectory_generation::derivative_order::VELOCITY, max_v_);
 		non_opt.addMaximumMagnitudeConstraint(mav_trajectory_generation::derivative_order::ACCELERATION, max_a_);
@@ -151,8 +166,6 @@ void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
 	odom_received_ = true;
 	tf::poseMsgToEigen(odom.pose.pose, current_pose_);
 	tf::vectorMsgToEigen(odom.twist.twist.linear, current_velocity_);
-	ROS_INFO_STREAM_ONCE("\nodom:\n" << odom);
-	ROS_INFO_STREAM("\ncpos:\n" << current_pose_.translation());
 	geometry_msgs::Quaternion q = odom.pose.pose.orientation;
 	yaw_ = tf::getYaw(q);
 }
@@ -161,7 +174,6 @@ void refPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
 	geometry_msgs::PoseStamped pose;
 	pose = *msg;
-	ROS_INFO_STREAM_ONCE("\npose\n" << pose);
 }
 
 void cmdTimerCallback(const ros::TimerEvent&)
@@ -197,5 +209,10 @@ void cmdTimerCallback(const ros::TimerEvent&)
 	else
 	{
 		publish_timer_.stop();
+		std::printf("\n\n\n[ INFO] Publish trajectory done\n");
+		std::printf("  If want process other trajectory\n");
+		std::printf("  Change param(s) target_pos (and middle_pos) in traj_gen.launch\n");
+		std::printf("  And relaunch: roslaunch traj_gen traj_gen.launch [input_middle:=true]\n\n\n");
+		ros::shutdown();
 	}
 }

@@ -17,8 +17,10 @@
 		<param name="max_a" value="$(arg max_a)"/>
 		<param name="max_ang_v" value="$(arg max_ang_v)"/>
 		<param name="max_ang_a" value="$(arg max_ang_a)"/>
-		<rosparam param="target_pos">[0.0, 0.0, 8.0]</rosparam>
-		<rosparam param="middle_pos">[2.0, 2.0, 3.0]</rosparam>
+
+		<rosparam param="middle_pos">[5.0, 5.0, 5.0]</rosparam>
+		<rosparam param="target_pos">[10.0, -5.0, 10.0]</rosparam>
+		
 		<rosparam param="target_vel">[0.0, 0.0, 0.0]</rosparam>
 	</node>
 

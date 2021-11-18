@@ -39,6 +39,7 @@ Eigen::Vector3d init_pos_;
 Eigen::Vector3d target_vel_;
 
 bool odom_received_ = false;
+bool input_middle_ = false;
 
 Eigen::Affine3d current_pose_ = Eigen::Affine3d::Identity();
 Eigen::Affine3d ref_pose_se3_ = Eigen::Affine3d::Identity();
