@@ -26,8 +26,7 @@
 #include <mavros_msgs/AttitudeTarget.h>
 #include <mavros_msgs/CompanionProcessStatus.h>
 
-// #include <controller_msgs/FlatTarget.h>
-#include "traj_gen/FlatTarget.h"
+#include <controller_msgs/FlatTarget.h>
 #include <std_srvs/SetBool.h>
 #include <trajectory_msgs/MultiDOFJointTrajectoryPoint.h>
 #include <trajectory_msgs/MultiDOFJointTrajectory.h>
@@ -116,8 +115,7 @@ class geometricCtrl
     void appendPoseHistory();
     void odomCallback(const nav_msgs::OdometryConstPtr& odomMsg);
     void targetCallback(const geometry_msgs::TwistStamped& msg);
-    // void flattargetCallback(const controller_msgs::FlatTarget& msg);
-    void flattargetCallback(const traj_gen::FlatTarget& msg);
+    void flattargetCallback(const controller_msgs::FlatTarget& msg);   
     void yawtargetCallback(const std_msgs::Float32& msg);
     void multiDOFJointCallback(const trajectory_msgs::MultiDOFJointTrajectory& msg);
     void keyboardCallback(const geometry_msgs::Twist& msg);

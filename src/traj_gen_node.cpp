@@ -13,7 +13,8 @@ int main(int argc, char** argv)
 
 	ros::Publisher marker_pub = nh.advertise<visualization_msgs::MarkerArray>("visualization_marker", 1);
 	
-	flat_ref_pub_ = nh.advertise<traj_gen::FlatTarget>("reference/flatsetpoint", 1);
+	// flat_ref_pub_ = nh.advertise<traj_gen::FlatTarget>("reference/flatsetpoint", 1);
+	flat_ref_pub_ = nh.advertise<controller_msgs::FlatTarget>("reference/flatsetpoint", 1);
 	yaw_ref_pub_ = nh.advertise<std_msgs::Float32>("reference/yaw", 1);
 
 	ros::Publisher command_pub = nh.advertise<trajectory_msgs::MultiDOFJointTrajectory>(mav_msgs::default_topics::COMMAND_TRAJECTORY, 1);
@@ -192,7 +193,8 @@ void cmdTimerCallback(const ros::TimerEvent&)
 		msg.header.stamp = ros::Time::now();
 		current_sample_time_ += dt_;
 
-		traj_gen::FlatTarget traj_msg;
+		// traj_gen::FlatTarget traj_msg;
+		controller_msgs::FlatTarget traj_msg;
 		traj_msg.type_mask = 2;
 		traj_msg.header = msg.header;
 		traj_msg.position = msg.points[0].transforms[0].translation;

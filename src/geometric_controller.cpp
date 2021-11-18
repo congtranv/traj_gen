@@ -92,8 +92,7 @@ void geometricCtrl::targetCallback(const geometry_msgs::TwistStamped& msg) {
 
 }
 
-// void geometricCtrl::flattargetCallback(const controller_msgs::FlatTarget& msg) {
-void geometricCtrl::flattargetCallback(const traj_gen::FlatTarget& msg) {
+void geometricCtrl::flattargetCallback(const controller_msgs::FlatTarget& msg) {
 
   reference_request_last_ = reference_request_now_;
 

@@ -15,7 +15,8 @@
 #include<tf/tf.h>
 #include<tf/transform_datatypes.h>
 #include<eigen_conversions/eigen_msg.h>
-#include<traj_gen/FlatTarget.h>
+// #include<traj_gen/FlatTarget.h>
+#include<controller_msgs/FlatTarget.h>
 #include<std_msgs/Float32.h>
 #include<vector>
 
