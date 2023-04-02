@@ -1,6 +1,6 @@
 # Trajectory generation and Geometric controller
 
-## 1. Depends on
+## 1. Dependencies 
 ***
 ### Trajectory generation, optimization and sampling from [ethz-asl/mav_trajectory_generation](https://github.com/ethz-asl/mav_trajectory_generation) 
 
